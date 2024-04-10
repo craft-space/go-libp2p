@@ -17,12 +17,12 @@ import (
 
 // ECDSAPrivateKey is an implementation of an ECDSA private key
 type ECDSAPrivateKey struct {
-	priv *ecdsa.PrivateKey
+	Priv *ecdsa.PrivateKey
 }
 
 // ECDSAPublicKey is an implementation of an ECDSA public key
 type ECDSAPublicKey struct {
-	pub *ecdsa.PublicKey
+	Pub *ecdsa.PublicKey
 }
 
 // ECDSASig holds the r and s values of an ECDSA signature
@@ -69,19 +69,19 @@ func ECDSAKeyPairFromKey(priv *ecdsa.PrivateKey) (PrivKey, PubKey, error) {
 
 // ECDSAPublicKeyFromPubKey generates a new ecdsa public key from an input public key
 func ECDSAPublicKeyFromPubKey(pub ecdsa.PublicKey) (PubKey, error) {
-	return &ECDSAPublicKey{pub: &pub}, nil
+	return &ECDSAPublicKey{Pub: &pub}, nil
 }
 
 // MarshalECDSAPrivateKey returns x509 bytes from a private key
 func MarshalECDSAPrivateKey(ePriv ECDSAPrivateKey) (res []byte, err error) {
 	defer func() { catch.HandlePanic(recover(), &err, "ECDSA private-key marshal") }()
-	return x509.MarshalECPrivateKey(ePriv.priv)
+	return x509.MarshalECPrivateKey(ePriv.Priv)
 }
 
 // MarshalECDSAPublicKey returns x509 bytes from a public key
 func MarshalECDSAPublicKey(ePub ECDSAPublicKey) (res []byte, err error) {
 	defer func() { catch.HandlePanic(recover(), &err, "ECDSA public-key marshal") }()
-	return x509.MarshalPKIXPublicKey(ePub.pub)
+	return x509.MarshalPKIXPublicKey(ePub.Pub)
 }
 
 // UnmarshalECDSAPrivateKey returns a private key from x509 bytes
@@ -121,7 +121,7 @@ func (ePriv *ECDSAPrivateKey) Type() pb.KeyType {
 // Raw returns x509 bytes from a private key
 func (ePriv *ECDSAPrivateKey) Raw() (res []byte, err error) {
 	defer func() { catch.HandlePanic(recover(), &err, "ECDSA private-key marshal") }()
-	return x509.MarshalECPrivateKey(ePriv.priv)
+	return x509.MarshalECPrivateKey(ePriv.Priv)
 }
 
 // Equals compares two private keys
@@ -133,7 +133,7 @@ func (ePriv *ECDSAPrivateKey) Equals(o Key) bool {
 func (ePriv *ECDSAPrivateKey) Sign(data []byte) (sig []byte, err error) {
 	defer func() { catch.HandlePanic(recover(), &err, "ECDSA signing") }()
 	hash := sha256.Sum256(data)
-	r, s, err := ecdsa.Sign(rand.Reader, ePriv.priv, hash[:])
+	r, s, err := ecdsa.Sign(rand.Reader, ePriv.Priv, hash[:])
 	if err != nil {
 		return nil, err
 	}
@@ -146,7 +146,7 @@ func (ePriv *ECDSAPrivateKey) Sign(data []byte) (sig []byte, err error) {
 
 // GetPublic returns a public key
 func (ePriv *ECDSAPrivateKey) GetPublic() PubKey {
-	return &ECDSAPublicKey{&ePriv.priv.PublicKey}
+	return &ECDSAPublicKey{&ePriv.Priv.PublicKey}
 }
 
 // Type returns the key type
@@ -156,7 +156,7 @@ func (ePub *ECDSAPublicKey) Type() pb.KeyType {
 
 // Raw returns x509 bytes from a public key
 func (ePub *ECDSAPublicKey) Raw() ([]byte, error) {
-	return x509.MarshalPKIXPublicKey(ePub.pub)
+	return x509.MarshalPKIXPublicKey(ePub.Pub)
 }
 
 // Equals compares to public keys
@@ -182,5 +182,5 @@ func (ePub *ECDSAPublicKey) Verify(data, sigBytes []byte) (success bool, err err
 
 	hash := sha256.Sum256(data)
 
-	return ecdsa.Verify(ePub.pub, hash[:], sig.R, sig.S), nil
+	return ecdsa.Verify(ePub.Pub, hash[:], sig.R, sig.S), nil
 }

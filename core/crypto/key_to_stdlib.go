@@ -47,7 +47,7 @@ func PrivKeyToStdKey(priv PrivKey) (crypto.PrivateKey, error) {
 	case *RsaPrivateKey:
 		return &p.sk, nil
 	case *ECDSAPrivateKey:
-		return p.priv, nil
+		return p.Priv, nil
 	case *Ed25519PrivateKey:
 		return &p.k, nil
 	case *Secp256k1PrivateKey:
@@ -67,7 +67,7 @@ func PubKeyToStdKey(pub PubKey) (crypto.PublicKey, error) {
 	case *RsaPublicKey:
 		return &p.k, nil
 	case *ECDSAPublicKey:
-		return p.pub, nil
+		return p.Pub, nil
 	case *Ed25519PublicKey:
 		return p.k, nil
 	case *Secp256k1PublicKey:
